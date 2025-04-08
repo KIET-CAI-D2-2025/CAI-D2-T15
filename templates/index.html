@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Mask Detection</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        #video-container {
+            margin-top: 20px;
+        }
+        #video-feed {
+            display: none;
+            border: 5px solid #333;
+            border-radius: 10px;
+        }
+        .btn {
+            display: inline-block;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn:hover {
+            opacity: 0.8;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+        }
+        .result-text {
+            font-size: 22px;
+            font-weight: bold;
+            padding: 15px;
+            margin-top: 15px;
+            display: inline-block;
+            border-radius: 8px;
+        }
+        .mask {
+            color: white;
+            background-color: #28a745;
+            border: 3px solid #1e7e34;
+        }
+        .no-mask {
+            color: white;
+            background-color: #dc3545;
+            border: 3px solid #b21f2d;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Live Face Mask Detection</h1>
+
+    <!-- Buttons to Start and Stop the Camera -->
+    <button id="start-btn" class="btn">Start Camera</button>
+    <button id="stop-btn" class="btn btn-danger">Stop Camera</button>
+
+    <!-- Video Feed (Initially Hidden) -->
+    <div id="video-container">
+        <img id="video-feed" src="{{ url_for('video_feed') }}" width="640" height="480">
+    </div>
+
+    <h2>Upload an Image</h2>
+    <form action="/upload" method="post" enctype="multipart/form-data">
+        <input type="file" name="file">
+        <input type="submit" value="Upload & Detect" class="btn">
+    </form>
+
+    {% if uploaded_image %}
+    <h3>Processed Image:</h3>
+    <img src="{{ url_for('static', filename=uploaded_image) }}?{{ timestamp }}" width="300">
+    
+    <!-- Display Detection Result Below the Image -->
+    {% if mask_detected == True %}
+        <p class="result-text mask">✅ Mask Detected - You are Safe! 😷</p>
+    {% elif mask_detected == False %}
+        <p class="result-text no-mask">❌ No Mask Detected - Please Wear a Mask! 🚨</p>
+    {% else %}
+        <p class="result-text">⚠️ Error detecting mask. Try again! ⚠️</p>
+    {% endif %}
+{% endif %}
+
+
+    <!-- JavaScript to Handle Start and Stop -->
+    <script>
+        document.getElementById("start-btn").addEventListener("click", function() {
+            document.getElementById("video-feed").style.display = "block";
+        });
+
+        document.getElementById("stop-btn").addEventListener("click", function() {
+            document.getElementById("video-feed").style.display = "none";
+        });
+    </script>
+
+</body>
+</html>
